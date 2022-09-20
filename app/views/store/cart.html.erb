@@ -1,0 +1,95 @@
+<section>
+  <h1>In your cart</h1>
+  <form method="POST" action="/store/cart/update" id="formCart">
+    <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+    <% @cart_form[:items].each_with_index do |item, idx| %>
+      <div class="row">
+        <div class="col-sm-4"><%= item[:name] %></div>
+        <div class="col-sm-4"><%= item[:price] %></div>
+        <div class="col-sm-4"><input type="text" value="<%= item[:amount] %>" name="cartItems[<%=idx%>]"/></div>
+      </div>
+    <% end %>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <input type="submit" name="action" value="Update" id="btnUpdate"/>
+        <input type="submit" name="action" value="Checkout" id="btnCheckout"/>
+      </div>
+    </div>
+  </form>
+  <% if (@item_added_events.present?) then %>
+  <script>
+      $(document).ready(
+          function () {
+              dataLayer.push({ecommerce: null });
+              items = [];
+              <% @item_added_events.each do |i|%>
+              items.push({
+                  item_id: <%= i[:itemId] %>,
+                  item_name: <%= i[:name] %>,
+                  price: <%= i[:price] %>,
+                  quantity: <%= i[:amount] %>
+              });
+              <% end %>
+
+              dataLayer.push({
+                  ecommerce: {
+                      currency:'IDR',
+                      items: items
+                  },
+                  event: "add_to_cart"
+              });
+          }
+      );
+  </script>
+  <% end %>
+  <% if (@item_removed_events.present?) then %>
+  <script>
+      $(document).ready(
+          function () {
+              dataLayer.push({ecommerce: null });
+              items = [];
+              <% @item_removed_events.each do |i| %>
+              items.push({
+                  item_id: <%= i[:itemId] %>,
+                  item_name: <%= i[:name] %>,
+                  price: <%= i[:price] %>,
+                  quantity: <%= i[:amount] %>
+              });
+              <% end %>
+              dataLayer.push({
+                  ecommerce: {
+                      items: items
+                  },
+                  event: "remove_from_cart"
+              });
+          }
+      );
+  </script>
+  <% end %>
+  <% if (@item_added_events.blank? && @item_removed_events.blank?) then %>
+  <script>
+      $(document).ready(
+          function () {
+              dataLayer.push({ecommerce: null });
+              items = [];
+              <% @cart_form[:items].each do |i|  %>
+              items.push({
+                  item_id: <%= i[:itemId] %>,
+                  item_name: <%= i[:name] %>,
+                  price: <%= i[:price] %>,
+                  quantity: <%= i[:amount] %>
+              });
+              <% end %>
+
+              dataLayer.push({
+                  ecommerce: {
+                      items: items
+                  },
+                  event: "view_cart"
+              });
+          }
+      );
+  </script>
+  <% end %>
+</section>

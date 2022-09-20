@@ -1,0 +1,8 @@
+<h1>Get these items</h1>
+<% @items.each do |item| %>
+  <div class="row">
+    <div class="col-sm-4"><%= item[:name] %></div>
+    <div class="col-sm-4"><%= item[:price] %></div>
+    <div class="col-sm-4"><a class="btn-default" href="/store/cart/add?itemId=<%= item[:id]%>" id="itemList-id-<%= item['id'] %>">Add to cart</a></div>
+  </div>
+<% end %>
