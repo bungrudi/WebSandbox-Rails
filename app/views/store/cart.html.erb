@@ -1,3 +1,4 @@
+<% content_for :title do %>Your shopping cart<% end %>
 <section>
   <h1>In your cart</h1>
   <form method="POST" action="/store/cart/update" id="formCart">
@@ -12,8 +13,8 @@
 
     <div class="row">
       <div class="col-sm-12">
-        <input type="submit" name="action" value="Update" id="btnUpdate"/>
-        <input type="submit" name="action" value="Checkout" id="btnCheckout"/>
+        <input type="submit" name="btnAction" value="Update" id="btnUpdate"/>
+        <input type="submit" name="btnAction" value="Checkout" id="btnCheckout"/>
       </div>
     </div>
   </form>
@@ -25,10 +26,10 @@
               items = [];
               <% @item_added_events.each do |i|%>
               items.push({
-                  item_id: <%= i[:itemId] %>,
-                  item_name: <%= i[:name] %>,
-                  price: <%= i[:price] %>,
-                  quantity: <%= i[:amount] %>
+                  item_id: '<%= i[:id] %>',
+                  item_name: '<%= i[:name] %>',
+                  price: '<%= i[:price] %>',
+                  quantity: '<%= i[:amount] %>'
               });
               <% end %>
 
@@ -51,10 +52,10 @@
               items = [];
               <% @item_removed_events.each do |i| %>
               items.push({
-                  item_id: <%= i[:itemId] %>,
-                  item_name: <%= i[:name] %>,
-                  price: <%= i[:price] %>,
-                  quantity: <%= i[:amount] %>
+                  item_id: '<%= i[:id] %>',
+                  item_name: '<%= i[:name] %>',
+                  price: '<%= i[:price] %>',
+                  quantity: '<%= i[:amount] %>'
               });
               <% end %>
               dataLayer.push({
@@ -75,10 +76,10 @@
               items = [];
               <% @cart_form[:items].each do |i|  %>
               items.push({
-                  item_id: <%= i[:itemId] %>,
-                  item_name: <%= i[:name] %>,
-                  price: <%= i[:price] %>,
-                  quantity: <%= i[:amount] %>
+                  item_id: '<%= i[:id] %>',
+                  item_name: '<%= i[:name] %>',
+                  price: '<%= i[:price] %>',
+                  quantity: '<%= i[:amount] %>'
               });
               <% end %>
 

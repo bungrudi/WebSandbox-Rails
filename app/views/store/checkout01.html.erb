@@ -1,0 +1,58 @@
+<% content_for :title do %>Checkout - shipping details<% end %>
+<section>
+    <h1>Shipping address</h1>
+    <form method="POST" action="/store/checkout/shipping" id="formCheckoutShipping">
+      <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+        <div class="row">
+            <div class="col-sm-4"><%= label_tag(:receiverName, "Receiver name") %></div>
+            <div class="col-sm-4"><%= text_field_tag(:receiverName) %></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"><%= label_tag(:addressLine1, "Address line 1") %></div>
+            <div class="col-sm-4"><%= text_field_tag(:addressLine1) %></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"><%= label_tag(:addressLine2, "Address line 2") %></div>
+            <div class="col-sm-4"><%= text_field_tag(:addressLine2) %></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"><%= label_tag(:country, "Country") %></div>
+            <div class="col-sm-4"><%= text_field_tag(:country) %></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8"><input type="submit" value="Next" id="btnNext"/></div>
+        </div>
+    </form>
+    <script>
+        $(document).ready(
+            function () {
+                dataLayer.push({ecommerce: null });
+                items = [];
+                <% @cart_form[:items].each do |i| %>
+                items.push({
+                    item_id: '<%= i[:id] %>',
+                    item_name: '<%= i[:name] %>',
+                    price: '<%= i[:price] %>',
+                    quantity: '<%= i[:amount] %>'
+                });
+                <% end %>
+                dataLayer.push({
+                    ecommerce: {
+                        items: items,
+                        currency: 'IDR',
+                        value: <%= @cart_form[:total] %>,
+                    },
+                    event: "begin_checkout"
+                });
+                dataLayer.push({
+                    ecommerce: {
+                        currency:'IDR',
+                        items: items,
+                        value: <%= @cart_form[:total] %>,
+                    },
+                    event: "add_shipping_info"
+                });
+            }
+        );
+    </script>
+</section>

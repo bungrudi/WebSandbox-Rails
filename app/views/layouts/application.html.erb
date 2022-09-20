@@ -2,15 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="layout (title, content)">
 <head>
   <meta charset="utf-8" />
-  <title th:replace="${title}">dev.adianto</title>
+  <title><%= yield :title %></title>
   <!-- GTM prep -->
   <script>
       window.dataLayer = window.dataLayer || [];
       window.pageTitle = document.querySelector("title").innerHTML;
   </script>
-  <script th:if="${session.loginState != null && session.loginState.loggedIn}">
-      dataLayer.push({'user_id':'[[${session.loginState.username}]]'})
-  </script>
+  <% if(session[:username]) then %>
+    <script>
+        dataLayer.push({'user_id':'<%=session[:username] %>'})
+    </script>
+  <% end %>
   <!-- End GTM prep -->
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -42,22 +44,28 @@
   <nav class="navbar">
     <a class="nav-link" href="/store/items" id="linkItems">Items</a>
     <a class="nav-link" href="/store/cart" id="linkCart">Cart</a>
-    <div class="nav-list" id="userState" th:switch="${session.loginState != null && session.loginState.loggedIn}">
-      <form method="POST" th:case="false" action="/login" id="formLogin">
-        <input type="text" name="username" value="username" />
-        <input type="text" name="password" value="password" />
-        <input type="submit" name="login" value="Login" />
-      </form>
-      <span th:case="true">
-                <span th:text="'Hi, '+${session.loginState.username}+'!'"></span><a href="/logout" id="linkLogout">Logout</a>
-                <script th:if="${loginSuccesful}" th:inline="javascript">
-                    dataLayer.push({
-                        user_id: [[${session.loginState.username}]],
-                        event:'login',
-                        method:'form'
-                    });
-                </script>
-            </span>
+    <div class="nav-list" id="userState">
+      <% if(session[:username].blank?) then %>
+        <form method="POST" action="/login" id="formLogin">
+          <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+          <input type="text" name="username" value="username" />
+          <input type="text" name="password" value="password" />
+          <input type="submit" name="login" value="Login" />
+        </form>
+      <% else %>
+      <span>
+          <span>Hi, <%=session[:username] %>!</span><a href="/logout" id="linkLogout">Logout</a>
+          <% if(flash[:login_successful]) then %>
+          <script>
+              dataLayer.push({
+                  user_id: '<%=session[:username] %>',
+                  event:'login',
+                  method:'form'
+              });
+          </script>
+          <% end %>
+      </span>
+      <% end %>
     </div>
   </nav>
   <%= yield %>

@@ -60,13 +60,44 @@ class StoreController < ApplicationController
     while(to_remove_idx = @cart_form[:items].find_index {|i| i[:amount]==0})
       @cart_form[:items].delete_at(to_remove_idx)
     end
-    render :cart
+    if(params[:btnAction]=="Update")
+      render :cart
+    else
+      render :checkout01
+    end
   end
 
   def cart
     @cart_form = session[:cart_form] ||= { :items => [] }
     @cart_form.deep_symbolize_keys!
     render :cart
+  end
+
+  def checkout_shipping
+    session[:receiverName] = params[:receiverName]
+
+    @cart_form = session[:cart_form] ||= { :items => [] }
+    @cart_form.deep_symbolize_keys!
+
+    @cart_form[:total] = 0
+    @cart_form[:items]&.each do |i|
+      @cart_form[:total] += i[:price] * i[:amount]
+    end
+
+    render :checkout02
+  end
+
+  def checkout_billing
+    @cart_form = session[:cart_form] ||= { :items => [] }
+    @cart_form.deep_symbolize_keys!
+
+    session[:cart_form] = nil
+
+    if(params[:btnAction]=="Back")
+      render :checkout01
+    else
+      render :checkout_success
+    end
   end
 
   def res_s
