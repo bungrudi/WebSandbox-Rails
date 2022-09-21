@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-sm-4"><%= item[:name] %></div>
         <div class="col-sm-4"><%= item[:price] %></div>
-        <div class="col-sm-4"><input type="text" value="<%= item[:amount] %>" name="cartItems[<%=idx%>]"/></div>
+        <div class="col-sm-4"><input type="text" value="<%= item[:amount] %>" name="cartItems[<%=idx%>]" id="cartItems<%=idx%>.amount" /></div>
       </div>
     <% end %>
 
@@ -68,7 +68,6 @@
       );
   </script>
   <% end %>
-  <% if (@item_added_events.blank? && @item_removed_events.blank?) then %>
   <script>
       $(document).ready(
           function () {
@@ -92,5 +91,4 @@
           }
       );
   </script>
-  <% end %>
 </section>
