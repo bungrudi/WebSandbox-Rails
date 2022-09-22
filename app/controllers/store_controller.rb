@@ -60,6 +60,12 @@ class StoreController < ApplicationController
     while(to_remove_idx = @cart_form[:items].find_index {|i| i[:amount]==0})
       @cart_form[:items].delete_at(to_remove_idx)
     end
+
+    @cart_form[:total] = 0
+    @cart_form[:items]&.each do |i|
+      @cart_form[:total] += i[:price] * i[:amount]
+    end
+
     if(params[:btnAction]=="Update")
       render :cart
     else
@@ -78,11 +84,6 @@ class StoreController < ApplicationController
 
     @cart_form = session[:cart_form] ||= { :items => [] }
     @cart_form.deep_symbolize_keys!
-
-    @cart_form[:total] = 0
-    @cart_form[:items]&.each do |i|
-      @cart_form[:total] += i[:price] * i[:amount]
-    end
 
     render :checkout02
   end
