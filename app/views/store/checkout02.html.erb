@@ -19,31 +19,5 @@
             <div class="col-sm-8"><input type="submit" name="btnAction" value="Back" id="btnBack"/><input type="submit" name="btnAction" value="Order" id="btnOrder"/></div>
         </div>
     </form>
-    <script>
-        $(document).ready(
-            function () {
-                dataLayer.push({ecommerce: null });
-                items = [];
-                <% @cart_form[:items].each do |i| %>
-                items.push({
-                    item_id: '<%= i[:id] %>',
-                    item_name: '<%= i[:name] %>',
-                    price: '<%= i[:price] %>',
-                    quantity: '<%= i[:amount] %>'
-                });
-                <% end %>
-
-                dataLayer.push({
-                    ecommerce: {
-                        currency:'IDR',
-                        items: items,
-                        value: <%= @cart_form[:total] %>,
-                        payment_type: "Credit Card"
-                    },
-                    event: "add_payment_info"
-                });
-            }
-        );
-    </script>
 </section>
 

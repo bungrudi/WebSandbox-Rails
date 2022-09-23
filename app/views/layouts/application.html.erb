@@ -8,11 +8,6 @@
       window.dataLayer = window.dataLayer || [];
       window.pageTitle = document.querySelector("title").innerHTML;
   </script>
-  <% if(session[:username]) then %>
-    <script>
-        dataLayer.push({'user_id':'<%=session[:username] %>'})
-    </script>
-  <% end %>
   <!-- End GTM prep -->
   <!-- Google Tag Manager -->
   <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -55,15 +50,7 @@
       <% else %>
       <span>
           <span>Hi, <%=session[:username] %>!</span><a href="/logout" id="linkLogout">Logout</a>
-          <% if(flash[:login_successful]) then %>
-          <script>
-              dataLayer.push({
-                  user_id: '<%=session[:username] %>',
-                  event:'login',
-                  method:'form'
-              });
-          </script>
-          <% end %>
+
       </span>
       <% end %>
     </div>

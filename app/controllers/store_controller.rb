@@ -25,10 +25,6 @@ class StoreController < ApplicationController
       else
         cart_item[:amount] += 1
       end
-      @item_added_events = []
-      event_item = cart_item.dup
-      event_item[:amount] = 1
-      @item_added_events.push event_item
     end
     render :cart
   end
@@ -39,20 +35,6 @@ class StoreController < ApplicationController
 
     @cart_form[:items].each_with_index do |item, idx|
       new_amount = params['cartItems'][idx.to_s]&.to_i
-      old_amount = item[:amount]
-      if(new_amount > old_amount)
-        delta = new_amount - old_amount
-        event_item = item.dup
-        event_item[:amount] = delta
-        @item_added_events ||= []
-        @item_added_events.push event_item
-      elsif (old_amount > new_amount)
-        delta = old_amount - new_amount
-        event_item = item.dup
-        event_item[:amount] = delta
-        @item_removed_events ||= []
-        @item_removed_events.push event_item
-      end
       item[:amount] = new_amount
     end
 
