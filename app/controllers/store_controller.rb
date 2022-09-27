@@ -8,7 +8,7 @@ class StoreController < ApplicationController
   end
 
   def cart_add
-    @cart_form = session[:cart_form] ||= { :items => [] }
+    @cart_form = session[:cart_form] ||= { :items => [], :total => 0 }
     @cart_form.deep_symbolize_keys!
     item = store_items().find { |i| i[:id] == params[:itemId]&.to_i }
     unless item == nil
@@ -29,12 +29,17 @@ class StoreController < ApplicationController
       event_item = cart_item.dup
       event_item[:amount] = 1
       @item_added_events.push event_item
+      @item_added_total ||= 0
+      @item_added_total += event_item[:price]
     end
+
+    @cart_form[:total] += cart_item[:price]
+
     render :cart
   end
 
   def cart_update
-    @cart_form = session[:cart_form] ||= { :items => [] }
+    @cart_form = session[:cart_form] ||= { :items => [], :total => 0 }
     @cart_form.deep_symbolize_keys!
 
     @cart_form[:items].each_with_index do |item, idx|
@@ -46,12 +51,16 @@ class StoreController < ApplicationController
         event_item[:amount] = delta
         @item_added_events ||= []
         @item_added_events.push event_item
+        @item_added_total ||= 0
+        @item_added_total += event_item[:amount] * event_item[:price]
       elsif (old_amount > new_amount)
         delta = old_amount - new_amount
         event_item = item.dup
         event_item[:amount] = delta
         @item_removed_events ||= []
         @item_removed_events.push event_item
+        @item_removed_total ||= 0
+        @item_removed_total += event_item[:amount] * event_item[:price]
       end
       item[:amount] = new_amount
     end
@@ -74,7 +83,7 @@ class StoreController < ApplicationController
   end
 
   def cart
-    @cart_form = session[:cart_form] ||= { :items => [] }
+    @cart_form = session[:cart_form] ||= { :items => [], :total => 0 }
     @cart_form.deep_symbolize_keys!
     render :cart
   end
